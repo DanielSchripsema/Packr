@@ -1,14 +1,11 @@
 const conveyerbelt = document.querySelector('.conveyer-belt');
 const boxVertical = document.querySelector('.boxVertical');
 const pickUpBox = document.querySelector('.pickUpBox');
-
 var conveyerPlace = document.getElementById("conveyerPlace");
 const conveyerbeltWidth = conveyerbelt.offsetWidth;
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
-
 let count = 0;
 let ps = [];
-let trucks = [];
 let boxVerticalArray = [];
 let pickUpIsFull = true;
 const form = document.getElementById('form');
@@ -16,6 +13,8 @@ const shapes = ["box", "straightBox", "TBox", "LBox", "SkewBox"];
 const transportTypes = ["Koudtransport", ".Breekbaartransport", "Algemeentransport", "Pallets", "Snelkoerier"];
 //idee array lopende banden die elke keer als een lopende band wordt toegevoegd de array met een vergroot en verwijderd een weg haald
 //bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe
+
+loop();
 
 
 
@@ -33,8 +32,7 @@ form.addEventListener('submit', function(event){
 });
 
 
-function main() {
-	initTruckForm();	
+function loop() {
     setInterval(createPackage, 5000);
     setInterval(conveyerRoll, 1000);
 }
@@ -60,8 +58,7 @@ function conveyerRoll() {
     if(checkPickUpDoos()){
     if (ps.length > 0) {
         ps.forEach(p => {
-		//hier gaat iets mis
-            if(canMove(p.x, 20)){
+            if(canMove(p.x, conveyerbeltWidth)){
                 p.moveHor();
             }else{
                 p.removeHor();
@@ -104,8 +101,6 @@ function createPackage() {
     }
 }
 
-
-//waarom?
 function createElement(tag) {
     return document.createElement(tag);
 }
@@ -123,41 +118,7 @@ function addDoosToOphaalbak(doosNaam) {
     pickupBoxItem.innerHTML = doosNaam;
     pickUpBox.append(pickupBoxItem);
 }
-function initTruckForm()
-{
-	let formButton = document.getElementById("truck_form_btn");
-	let formCloseButton = document.getElementById("truck_form_close_btn");
-	let formButtonSubmit = document.getElementById("truck_form_submit");
-	let form = document.getElementById("truck_form");
-	form.action="javascript:void(0);"
-	formButtonSubmit.onclick = function () { 
-		let form = document.getElementById("truck_form");
-		let data = new FormData(form);
-		let truck = new Truck(data.get('x-size'),
-			data.get('y-size'),
-			data.get('delay'),
-			data.get('type'),
-			data.get('radius'));
-		form.reset();
-		trucks.push(truck);
-		formButtonToggle();
-	}
-	form.reset();
-	formButtonToggle();
-	formButton.onclick = function (){ formButtonToggle()} ;
-	formCloseButton.onclick = function() { formButtonToggle()};
-}
 
-function formButtonToggle()
-{
-	let form = document.getElementById("truck_form");
-	if(form.style.display == "none") { 
-		form.style.display = "block";
-	}	
-	else {
-		form.style.display = "none";
-	}
-}
 
 
 
@@ -199,51 +160,6 @@ class Package {
         this.y += 60;
         this.count++
     }
+
+    
 }
-
-
-class Truck 
-{
-	constructor(x, y, delay, type, radius)
-		{
-			this.width = x;
-			this.height = y;
-			this.delay = delay;
-			this.type = type;
-			this.radius = radius;
-			this.createTruck();
-		}
-
-	tryLoadParcel(parcel, topX, topY)
-		{ 
-			return 0;			
-		}
-	draw()
-	{
-		
-	}
-
-	createTruck()
-	{
-		let parking = document.getElementById('trucks_parking');
-		let truck = document.createElement('div');
-		truck.className = 'truck';
-		for(let y = 0; y < this.height; y++)
-		{
-			let row = document.createElement('div');
-			row.className = 'row';
-			
-			for(let x = 0; x < this.width; x++)
-			{
-				let cell = document.createElement('div');
-				cell.className = 'col';
-				row.appendChild(cell);
-			}
-		truck.appendChild(row);
-		}
-		parking.appendChild(truck);
-	}
-}
-
-window.onload = main;
-
