@@ -9,36 +9,62 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-	    <div> 
-		<row>
-		<button type="button" class="btn btn-primary">Voeg rolband toe</button>
-		<button class="btn btn-primary" id="truck_form_btn">Add a truck</button>
+            <div class="layout">
+                <div id="conveyerPlace">
+                    <button  onclick="addConveyerBelt()" class="btn btn-primary">Voeg rolband toe</button>
+                    <button  onclick="RemoveConveyerBelt()" class="btn btn-primary">Verwijder rolband</button>
+                  	<button class="btn btn-primary" id="truck_form_btn">Add a truck</button>
+                    <form id="form">
+                      <div class="form-group">
+                        <p class="h5">Soort transport:</p>
+                          <select class="form-control" name="select" id="transportkind">
+                              <option>Koudtransport</option>
+                              <option>Breekbaartransport</option>
+                              <option>Algemeentransport</option>
+                              <option>Pallets</option>
+                              <option>Snelkoerier</option>
+                            </select>
+                      </div>
+                      <div class="form-group">
+                        <p class="h5">Soort vorm:</p>
+                          <select class="form-control"  name="select" id="Shape">
+                              <option>box</option>
+                              <option>straightBox</option>
+                              <option>TBox</option>
+                              <option>LBox</option>
+                              <option>SkewBox</option>
+                            </select>
+                      </div>
 
+                      <button type="submit" class="btn btn-primary">Voeg doos toe</button>
+                  </form>
 		</row>
-
 	    </div>
             <div class="layout">
                 <div>
                                    <div class="conveyer-belt">
 
-                    </div>
-                    
-                    <div class="conveyer-belt">
-                    </div>
+                   </div>
                 </div>
                 
-                   
+                
                 <div>
 
-                    <div class="boxVertical">
+                      <div class="pickUpBox">
+    
+                      </div>
+                </div>
                     </div>
 
                 </div>
 		<div>
 			<div class="trucks_parking" id="trucks_parking"> 
-			</div>
+      </div>
          
             </div>
+            <!-- <script src="PickUpDoos.js"></script> -->
+            <script src="index.js" defer></script>
+
 
 	    </div>
 		<div>

@@ -2,19 +2,58 @@ const conveyerbelt = document.querySelector('.conveyer-belt');
 const boxVertical = document.querySelector('.boxVertical');
 const pickUpBox = document.querySelector('.pickUpBox');
 
+var conveyerPlace = document.getElementById("conveyerPlace");
 const conveyerbeltWidth = conveyerbelt.offsetWidth;
-const conveyerbeltHeight = 500;
+var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 
 let count = 0;
 let ps = [];
 let trucks = [];
 let boxVerticalArray = [];
 let pickUpIsFull = true;
+const form = document.getElementById('form');
+const shapes = ["box", "straightBox", "TBox", "LBox", "SkewBox"];
+const transportTypes = ["Koudtransport", ".Breekbaartransport", "Algemeentransport", "Pallets", "Snelkoerier"];
+//idee array lopende banden die elke keer als een lopende band wordt toegevoegd de array met een vergroot en verwijderd een weg haald
+//bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe
+
+
+
+form.addEventListener('submit', function(event){
+    event.preventDefault();
+    //check dat er niet al te veel op de rolbank liggen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //twee arrays vertical en horizontal bij elkaar tellen en een bepaald aantal niet te laten bereieken ik denk dat de error daarvandaan komt
+        let transport = document.getElementById('transportkind').value
+        let shape = document.getElementById('Shape').value
+        console.log(shape);
+        //functie create package hier gebruiken uiteindelijk hieronder
+        const type = createElement('div');
+        type.classList.add(shape, 'move');
+        ps.push(new Package(type, shape, transport));
+});
+
 
 function main() {
 	initTruckForm();	
     setInterval(createPackage, 5000);
     setInterval(conveyerRoll, 1000);
+}
+
+function addConveyerBelt() {
+    //begrijp niet helemaal of die het doet of niet doet
+     conveyerbeltHeight = boxVertical.offsetHeight + 150;
+    var ConveyerBelt = document.createElement("div");
+    ConveyerBelt.classList.add('conveyer-belt');
+    // var text = document.createTextNode("Tutorix is the best e-learning platform");
+    // ConveyerBelt.appendChild(text);
+    conveyerPlace.appendChild(ConveyerBelt)
+}
+
+function RemoveConveyerBelt() {
+    if(conveyerPlace.children.length > 4){
+        conveyerbeltHeight = boxVertical.offsetHeight - 150;
+        conveyerPlace.removeChild(conveyerPlace.lastChild);
+    }
 }
 
 function conveyerRoll() {
@@ -36,6 +75,7 @@ function conveyerRoll() {
                 }else {
                     addDoosToOphaalbak(p.el);
                     boxVerticalArray.shift();
+                    boxVertical.removeChild(p.type);
                 }
         }); 
     }
@@ -50,10 +90,18 @@ function checkPickUpDoos(){
     }
 }
 
+
 function createPackage() {
+    if(checkPickUpDoos()){
+        //twee regels hieronder functie maken random shape en type
+    let RandomTransportType =  transportTypes[Math.floor(Math.random() * transportTypes.length)];
+    let randomShape =  shapes[Math.floor(Math.random() * shapes.length)];
+
+    //hieronder functie maken create package
     const type = createElement('div');
-    type.classList.add('box', 'move');
-    ps.push(new Package(type));
+    type.classList.add(randomShape, 'move');
+    ps.push(new Package(type, randomShape, RandomTransportType));
+    }
 }
 
 
@@ -72,7 +120,6 @@ function canMove(PackageX, conveyerbeltSize) {
 
 function addDoosToOphaalbak(doosNaam) {
     var pickupBoxItem = document.createElement('li');
-    pickupBoxItem.classList.add('Drag-item', 'draggable="true"');
     pickupBoxItem.innerHTML = doosNaam;
     pickUpBox.append(pickupBoxItem);
 }
@@ -115,19 +162,21 @@ function formButtonToggle()
 
 
 class Package {
-    constructor(type) {
+    constructor(type, element, TransportType) {
         this.type = type;
         this.x = 0;
         this.y = 0;
         this.count = 0;
         this.draw();
-        this.el = document.querySelector('.box');
+        this.el = document.querySelector(('.' + element));
         this.offset = 0;
         this.width = this.el.offsetWidth;
         this.height = this.el.offsetWidth;
+        this.transportType = TransportType;
     }
 
     draw() {
+        //random conveyerbelt
         conveyerbelt.appendChild(this.type);
     }
 
