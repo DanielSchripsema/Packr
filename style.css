@@ -6,12 +6,39 @@ div .conveyer-belt:not(:first-child) {
     width: 100%;
     height: 90px;
     background-color: rgb(105, 105, 105);
+    margin-top: 10%;
+    margin-bottom: 20px;
+    z-index: -2;
+}
+
+.nav-bar {
+	margin: 10px;
+	   width: 100%;
+	   display: table;
+   text-align: center;
 }
 
 .box {
-    width: 70px;
-    height: 70px;
-    background-color: burlywood;
+    border-radius: 4px;
+    padding: 5px;
+    width: 90px;
+    height: 90px;
+    position: absolute;
+}
+
+.imgSize {
+  border-radius: 4px;
+  padding: 5px;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+}
+
+
+.straightBox {
+    border-radius: 4px;
+    padding: 5px;
+    width: 90px;
     position: absolute;
 }
 
@@ -25,23 +52,17 @@ div .conveyer-belt:not(:first-child) {
     width: 100%;
     height: 100%;
     background-color: black;
-    position: relative;
 }
 
-#truck_form{
-	left: 50%;
-	top: 50%;
-	margin-left: auto;
-	margin-right: auto;
-	position: absolute;
-	margin-top: -25%;
+form{
+	margin: 10px;
+	text-align: left;
 	background: white;
-	padding: 30px;
-	border-radius: 25px;
-	border: 2px solid black;
-
+	padding: 20px;
+	border: 1px solid black;
+	display: inline-block;
 }
-#truck_form_close_btn{
+.btn-close{
 	left: 100%;
 	position: sticky;
 }
@@ -57,7 +78,6 @@ div .conveyer-belt:not(:first-child) {
 	padding: 10px;
 	margin: 5px;
 	margin-right: 20px;
-
 }
 
 .col {
@@ -73,12 +93,46 @@ div .conveyer-belt:not(:first-child) {
 	margin: 0px;
 	padding 0px;
 }
+.TBox {
+    /* werkt niet
+    clip-path: polygon(10% 25%, 35% 25%, 65% 25%, 90% 25%, 90% 50%, 65% 50%, 65% 100%, 35% 100%, 35% 50%, 10% 50%);
+    */
+    border-radius: 4px;
+    padding: 5px;
+    width: 90px;
+    height: 90px;
+    position: absolute;
+}
 
+.LBox {
+    /* werkt niet
+    */
+    border-radius: 4px;
+    padding: 5px;
+    width: 90px;
+    height: 90px;
+    position: absolute;
+}
+
+.SkewBox {
+    /* werkt niet
+    */
+    border-radius: 4px;
+    padding: 5px;
+    width: 90px;
+    height: 90px;
+    position: absolute;
+
+}
+.pickUpBox {
+    width: 100%;
+    height: 150px;
+    bottom: 0;
+}
 .boxVertical {
     width: 100%;
     height: 100%;
     background-color: rgb(105, 105, 105);
-    position: relative;
 }
 
 .move {
@@ -88,5 +142,18 @@ div .conveyer-belt:not(:first-child) {
 .layout{
     display: grid;
     grid-template-columns: 32% 4% auto;
-    height: 500px; 
+    height: auto; 
+    width: 1000px;
+    padding: 10px;
+    border: 2px solid black;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.drag-over {
+    border: dashed 2px black;
+}
+
+.display-none {
+	display: none;
 }
