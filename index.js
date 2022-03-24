@@ -22,8 +22,8 @@ const transportTypes = ["Koudtransport", ".Breekbaartransport", "Algemeentranspo
 function main() {
 	initTruckForm();	
 	initPackageForm();
-	setInterval(createPackage, 50);
-	setInterval(conveyerRoll, 10);
+	setInterval(createPackage, 5000);
+	setInterval(conveyerRoll, 1000);
 }
 
 
@@ -262,7 +262,7 @@ class Truck
 
 	tryLoadParcel(parcel)
 	{ 
-		return false;
+		return true;
 	}
 		
 
