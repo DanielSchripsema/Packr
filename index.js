@@ -19,9 +19,8 @@ const transportTypes = ["Koudtransport", ".Breekbaartransport", "Algemeentranspo
 //bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe 
 
 
-import WeatherAPI, {getData as getWeatherData} from './WeatherAPI.js'
+import WeatherAPI, {getData, getData as getWeatherData} from './WeatherAPI.js'
 const weatherAPI = new WeatherAPI();
-getWeatherData();
 
 
 function main() {
@@ -138,29 +137,16 @@ function addDoosToOphaalbak(doosNaam) {
 	 pickUpBox.append(pickupBoxItem);
 }
 
-function initTempForm()
-{
-	let formButton = document.getElementById("Temp-form-btn");
-	//let formCloseButton = document.getElementById("Temp-form-close-btn");
+
 	let form = document.getElementById("Temp-form");
-	form.action="javascript:void(0);"
-	//formCloseButton.onclick = function () {formButtonToggle(form)};
-	formButton.onclick = function (){ formButtonToggle(form)};
-	formButtonToggle(form);
-	form.reset();
 	form.addEventListener('submit', function(event){
+    form.action="javascript:void(0);"
 	event.preventDefault();
-	
 	let latitude = document.getElementById('latitude').value
 	let longitude = document.getElementById('longitude').value
-
-        console.log(latitude);
-        console.log(longitude);
-	
-	formButtonToggle(form);
-	form.reset();
+    getWeatherData(longitude, latitude)
 	});
-}
+
 
 function initPackageForm()
 {
