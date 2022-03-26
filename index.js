@@ -16,9 +16,6 @@ let loopBelt = 1;
 
 const shapes = ["box", "straightBox", "TBox", "LBox", "SkewBox"]; 
 const transportTypes = ["Koudtransport", ".Breekbaartransport", "Algemeentransport", "Pallets", "Snelkoerier"]; 
-//idee array lopende banden die elke keer als een lopende band wordt toegevoegd de array met een vergroot en verwijderd een weg haald 
-//bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe 
-
 
 function main() {
 	initTruckForm();	
@@ -27,16 +24,12 @@ function main() {
 	setInterval(conveyerRoll, 1000);
 }
 
-
 function addConveyerBelt() { 
-//begrijp niet helemaal of die het doet of niet doet 
 conveyerbeltHeight = boxVertical.offsetHeight + 150; 
 var ConveyerBelt = document.createElement("div"); 
 ConveyerBelt.classList.add('conveyer-belt'); 
 ConveyerBelt.setAttribute('id','conveyerBelt' + conveyerIDAmount)
 conveyerIDAmount++;
-// var text = document.createTextNode("Tutorix is the best e-learning platform"); 
-// ConveyerBelt.appendChild(text); 
 conveyerPlace.appendChild(ConveyerBelt) 
 }
 
@@ -83,14 +76,9 @@ function checkPickUpDoos(){
 
 function createPackage() {
       if(checkPickUpDoos()){
-          //twee regels hieronder functie maken random shape en type
       let RandomTransportType =  transportTypes[Math.floor(Math.random() * transportTypes.length)];
       let randomShape =  shapes[Math.floor(Math.random() * shapes.length)];
-          // \\ -> \
-      //hieronder functie maken create package
-      // const type = createElement('div');
       const img = createElement('img');
-      // img.src="images\\green-zig-zag.png"
       img.src=getImageSRC(randomShape);
       img.classList.add( 'move', randomShape);
       ps.push(new Package(img, randomShape, RandomTransportType));
@@ -151,13 +139,9 @@ function initPackageForm()
 	form.reset();
 	form.addEventListener('submit', function(event){
 	event.preventDefault();
-	//check dat er niet al te veel op de rolbank liggen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//twee arrays vertical en horizontal bij elkaar tellen en een bepaald aantal niet te laten bereieken ik denk dat de error daarvandaan komt
 	let transport = document.getElementById('transportkind').value
 	let shape = document.getElementById('Shape').value
-	//functie create package hier gebruiken uiteindelijk hieronder
 	const img = createElement('img');
-	// img.src="images\\green-zig-zag.png"
 	img.src=getImageSRC(shape);
 	img.classList.add( 'move', shape);
 	ps.push(new Package(img, shape, transport));
