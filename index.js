@@ -1,10 +1,10 @@
-const conveyerbelt = document.querySelector('.conveyer-belt');
+const conveyerbelt = document.getElementById('conveyerBelt1');
 const boxVertical = document.querySelector('.boxVertical');
 const pickUpBox = document.querySelector('.pickUpBox');
 const conveyerbeltWidth = conveyerbelt.offsetWidth;    
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 
-let count = 0;
+let conveyerIDAmount = 2;
 let ps = [];
 let trucks = [];
 let boxVerticalArray = [];
@@ -12,6 +12,7 @@ let pickUpIsFull = true;
 let readyParcels =[];
 let truckCount = 0;
 let parcelCount = 0;
+let loopBelt = 1;
 
 const shapes = ["box", "straightBox", "TBox", "LBox", "SkewBox"]; 
 const transportTypes = ["Koudtransport", ".Breekbaartransport", "Algemeentransport", "Pallets", "Snelkoerier"]; 
@@ -32,15 +33,19 @@ function addConveyerBelt() {
 conveyerbeltHeight = boxVertical.offsetHeight + 150; 
 var ConveyerBelt = document.createElement("div"); 
 ConveyerBelt.classList.add('conveyer-belt'); 
+ConveyerBelt.setAttribute('id','conveyerBelt' + conveyerIDAmount)
+conveyerIDAmount++;
 // var text = document.createTextNode("Tutorix is the best e-learning platform"); 
 // ConveyerBelt.appendChild(text); 
 conveyerPlace.appendChild(ConveyerBelt) 
 }
 
 function RemoveConveyerBelt() {
-if(conveyerPlace.children.length > 4){
+if(conveyerPlace.children.length > 1){
   conveyerbeltHeight = boxVertical.offsetHeight - 150;
   conveyerPlace.removeChild(conveyerPlace.lastChild);
+  conveyerIDAmount--;
+  loopBelt--;
 }
 }
 function conveyerRoll() { 
@@ -197,6 +202,18 @@ function formButtonToggle(form)
 	}
 }
 
+function getConveyerbelt(){
+    if(conveyerIDAmount == 2){
+        return conveyerbelt;
+    }else{
+            if(loopBelt == conveyerIDAmount){
+                loopBelt = 1;
+            }
+            let conveyerbelt = document.getElementById(('conveyerBelt' + loopBelt));
+            loopBelt++;
+            return conveyerbelt;
+    }   
+}
 
  class Package {
       constructor(type, element, TransportType) {
@@ -204,6 +221,7 @@ function formButtonToggle(form)
           this.x = 0;
           this.y = 0;
           this.count = 0;
+          this.OwnConveyerbelt = getConveyerbelt();
           this.draw();
           this.shape = element;
           this.el = document.querySelector(('.' + element));
@@ -213,12 +231,12 @@ function formButtonToggle(form)
           this.transportType = TransportType;
       }
     draw() {
-        conveyerbelt.appendChild(this.type);
+        this.OwnConveyerbelt.appendChild(this.type); 
     }
 
 
     removeHor() {
-            conveyerbelt.removeChild(this.type);
+            this.OwnConveyerbelt.removeChild(this.type);
             ps.shift();
             boxVerticalArray.push(this);
             boxVertical.appendChild(this.type);
