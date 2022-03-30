@@ -34,6 +34,11 @@ function main() {
 function initGUI(){
 
 	let switchHallBtn = document.getElementById("hall-switch-btn");
+	let addConveyerBeltBtn = document.getElementById("add-conveyerbelt-btn");
+	let removeConveyerBeltBtn = document.getElementById("remove-conveyerbelt-btn");
+	addConveyerBeltBtn.addEventListener("click", addConveyerBelt);
+	removeConveyerBeltBtn.addEventListener("click", removeConveyerBelt);
+
 	let primaryHall = document.getElementById("primary-hall");
 	let secondaryHall = document.getElementById("secondary-hall");
 	primaryHall.style.display = 'block';
@@ -67,7 +72,7 @@ ConveyerBelt.classList.add('conveyer-belt');
 conveyerPlace.appendChild(ConveyerBelt) 
 }
 
-function RemoveConveyerBelt() {
+function removeConveyerBelt() {
 	if(conveyerPlace.children.length > 4){
 	  conveyerbeltHeight = boxVertical.offsetHeight - 150;
 	  conveyerPlace.removeChild(conveyerPlace.lastChild);
