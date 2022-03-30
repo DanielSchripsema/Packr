@@ -99,9 +99,6 @@ form{
 	height: 30px
 }
 .TBox {
-    /* werkt niet
-    clip-path: polygon(10% 25%, 35% 25%, 65% 25%, 90% 25%, 90% 50%, 65% 50%, 65% 100%, 35% 100%, 35% 50%, 10% 50%);
-    */
     border-radius: 4px;
     padding: 5px;
     width: 90px;
@@ -110,8 +107,6 @@ form{
 }
 
 .LBox {
-    /* werkt niet
-    */
     border-radius: 4px;
     padding: 5px;
     width: 90px;
@@ -120,8 +115,6 @@ form{
 }
 
 .SkewBox {
-    /* werkt niet
-    */
     border-radius: 4px;
     padding: 5px;
     width: 90px;

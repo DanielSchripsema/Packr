@@ -17,6 +17,9 @@ const transportTypes = ["cold", "volatile", "general", "pallets", "courier"];
 //idee array lopende banden die elke keer als een lopende band wordt toegevoegd de array met een vergroot en verwijderd een weg haald 
 //bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe 
 
+import WeatherAPI, {getData, getData as getWeatherData} from './WeatherAPI.js'
+const weatherAPI = new WeatherAPI();
+
 
 function main() {
 	initTruckForm();	
@@ -32,21 +35,21 @@ function initGUI(){
 
 	let switchHallBtn = document.getElementById("hall-switch-btn");
 	let primaryHall = document.getElementById("primary-hall");
-	let secondayHall = document.getElementById("seconday-hall");
+	let secondaryHall = document.getElementById("secondary-hall");
 	primaryHall.style.display = 'block';
-	secondayHall.style.display = 'none';
+	secondaryHall.style.display = 'none';
 	switchHallBtn.addEventListener('click', function(){
 		let primaryHall = document.getElementById("primary-hall");
-	let secondayHall = document.getElementById("seconday-hall");
+	let secondaryHall = document.getElementById("secondary-hall");
 		console.log(primaryHall);
 
 		if(primaryHall.style.display == 'block'){
 			primaryHall.style.display = 'none';	
-			secondayHall.style.display = 'block';	
+			secondaryHall.style.display = 'block';	
 		}
 		else {
 			primaryHall.style.display = 'block';	
-			secondayHall.style.display = 'none';	
+			secondaryHall.style.display = 'none';	
 
 		}
 	});
@@ -168,6 +171,16 @@ function addDoosToOphaalbak(doosNaam) {
 	 pickupBoxItem.id = doosNaam.id; 
 	 pickUpBox.append(pickupBoxItem);
 }
+
+
+	let form = document.getElementById("Temp-form");
+	form.addEventListener('submit', function(event){
+    form.action="javascript:void(0);"
+	event.preventDefault();
+	let latitude = document.getElementById('latitude').value
+	let longitude = document.getElementById('longitude').value
+    getWeatherData(longitude, latitude)
+	});
 
 
 function initPackageForm()
@@ -435,9 +448,6 @@ pickUpBox.children
 
 	e.target.appendChild(pkg);
 	}
-
-	
-	
 
 	else alert("The didn't fit");
 }
