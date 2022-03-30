@@ -178,7 +178,7 @@ function addDoosToOphaalbak(doosNaam) {
 
 	let form = document.getElementById("Temp-form");
 	form.addEventListener('submit', function(event){
-    form.action="javascript:void(0);"
+	form.action="javascript:void(0);"
 	event.preventDefault();
 	let latitude = document.getElementById('latitude').value
 	let longitude = document.getElementById('longitude').value
