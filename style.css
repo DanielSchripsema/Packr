@@ -12,18 +12,21 @@ div .conveyer-belt:not(:first-child) {
 }
 
 .nav-bar {
-	margin: 10px;
-	   width: 100%;
-	   display: table;
-   text-align: center;
+   margin: 10px;
+   width: 100%;
+   display: table;
 }
-
 .box {
     border-radius: 4px;
     padding: 5px;
     width: 90px;
     height: 90px;
     position: absolute;
+}
+
+.pickup-shape{
+	width: 30px;
+	height: 30px;
 }
 
 .imgSize {
@@ -34,18 +37,16 @@ div .conveyer-belt:not(:first-child) {
   position: absolute;
 }
 
+.truck-load{
+	width: 30px;
+	height: 30px;
+}
 
 .straightBox {
     border-radius: 4px;
     padding: 5px;
     width: 90px;
     position: absolute;
-}
-
-.pickUpBox {
-    width: 100%;
-	height 100%;
-    background-color: orange; 
 }
 
 .trucks_parking{
@@ -68,16 +69,21 @@ form{
 }
 
 .truck {
-	display: flex;
-	flex-direction: column;
-	align-content: left;
 	background-color: black;
 	border: 1px solid white;
- 	font-size: 0;
-	display: inline-block;
 	padding: 10px;
 	margin: 5px;
 	margin-right: 20px;
+	position: relative;
+	display:flex;
+	flex-direction: column;
+	align-content: left;
+	width: fit-content;
+}
+
+.truck-info  {
+	color: white;
+	padding: 10px;
 }
 
 .col {
@@ -90,8 +96,7 @@ form{
 }
 
 .row {
-	margin: 0px;
-	padding 0px;
+	height: 30px
 }
 .TBox {
     /* werkt niet
@@ -126,9 +131,16 @@ form{
 }
 .pickUpBox {
     width: 100%;
-    height: 150px;
+    height: auto;
+    background-color: orange;
     bottom: 0;
 }
+.pickupBoxItem{
+	list-style-type: none;  	
+	padding: 5px;
+	text-align: center;
+}
+
 .boxVertical {
     width: 100%;
     height: 100%;
@@ -147,6 +159,27 @@ form{
     padding: 10px;
     border: 2px solid black;
 }
+
+.truck-departing{
+	animation-name: departanimation;
+	animation-duration: 3s;
+}
+
+@-webkit-keyframes departanimation{
+  0% {
+    opacity: 1;
+    left: 0%;
+  }
+  75% {
+    opacity: 0;
+    left: 75%;
+  }
+  100% {
+    opacity: 0;
+    left: 100%;
+  }
+}
+
 
 .drag-over {
     border: dashed 2px black;
