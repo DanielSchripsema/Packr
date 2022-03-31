@@ -1,11 +1,11 @@
+
+import WeatherAPI from './WeatherAPI.js'
 const conveyerbelt = document.getElementById('conveyerBelt1');
 const boxVertical = document.querySelector('.boxVertical');
 const pickUpBox = document.querySelector('.pickUpBox');
 const conveyerbeltWidth = conveyerbelt.offsetWidth;    
-const nlCoardinates = { lat: 52, lon: 5};
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 
-let currentCords = nlCoardinates;
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 let conveyerIDAmount = 2;
 let ps = [];
@@ -22,18 +22,16 @@ const transportTypes = ["cold", "volatile", "general", "pallets", "courier"];
 //idee array lopende banden die elke keer als een lopende band wordt toegevoegd de array met een vergroot en verwijderd een weg haald 
 //bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe 
 
-import WeatherAPI, {getData as getWeatherData, getWeather} from './WeatherAPI.js'
 const weatherAPI = new WeatherAPI();
 
 function main() {
 	initTruckForm();	
 	initPackageForm();
-	setInterval(createPackage, 50);
-	setInterval(conveyerRoll, 10);
+	setInterval(createPackage, 5000);
+	setInterval(conveyerRoll, 1000);
 	initGUI();
 	let trucks = [];
 	localStorage.setItem("trucks", JSON.stringify(trucks));
-	getWeatherData(nlCoardinates.lon, nlCoardinates.lat);
 }
 
 function initGUI(){
@@ -73,9 +71,8 @@ function initWeatherForm(){
 	form.action="javascript:void(0);"
 	form.addEventListener('submit', function(event){
 	event.preventDefault();
-	currentCords.latitude = document.getElementById('latitude').value
-	currentCords.longitude = document.getElementById('longitude').value
-        getWeatherData(currentCords.lon , currentCords.lat);
+	weatherAPI.changeCords(document.getElementById('latitude').value, document.getElementById('longitude').value);
+	weatherAPI.getData();
 	});
 }
 
@@ -187,7 +184,6 @@ function addDoosToOphaalbak(doosNaam) {
 
 	 pickupBoxItem.draggable = true;
 	 pickupBoxItem.addEventListener('dragstart', dragStart);
-	 console.log(doosNaam);
 	 readyBoxes.push(doosNaam);
 	 pickupBoxItem.id = doosNaam.id; 
 	 pickUpBox.append(pickupBoxItem);
@@ -395,7 +391,7 @@ class Truck
 	
 	async depart()
 	{
-		if(await getWeather(currentCords.lon, currentCords.lat) != "Rain"){
+		if(await weatherAPI.getWeather() != "Rain"){
 			let truck = document.getElementById(this.id);
 			truck.classList.add("truck-departing");
 			truck.addEventListener('animationend', () => {
