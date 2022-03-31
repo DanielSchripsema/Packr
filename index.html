@@ -8,7 +8,6 @@
 	<link rel="shortcut icon" href="#">
 	<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 	<div class="nav-bar">
 		<button class="btn btn-primary" id="truck_form_btn">Add a truck</button>
@@ -21,15 +20,10 @@
 
 	<div id="primary-hall">
 	<div class="layout">
-
 		<div id="conveyerPlace">
 
-
-
-
-			<div class="conveyer-belt">
+			<div class="conveyer-belt" id="conveyerBelt1">
 			</div>
-
 		</div>
 		<div class="boxVertical">
 		</div>
@@ -37,9 +31,7 @@
 		</div>
 		<div class="pickUpBox"></div>
 		</div>
-
 		<div>
-
 	</div>
 	</div>
 
@@ -49,12 +41,8 @@
 
 		<div id="conveyerPlace">
 
-
-
-
-			<div class="conveyer-belt">
+			<div class="conveyer-belt" id="conveyerBelt1">
 			</div>
-
 		</div>
 		<div class="boxVertical">
 		</div>
@@ -62,20 +50,15 @@
 		</div>
 		<div class="pickUpBox"></div>
 		</div>
-
 		<div>
-
 	</div>
 	</div>
-
 	<div>
-
 			<form id="Temp-form">
 				<label id = "CounrtyTemp">
-					Click to see the temp, weather and country of the inserted lat and long:
 				</label>
-				<input type="number" id="latitude" name="latitude" value="52" min="-100" max="100">
-				<input type="number" id="longitude" name="longitude" value="5" min="-100" max="100">
+				<input type="number" id="latitude" name="latitude" value="52" min="-100.00" max="100.00">
+				<input type="number" id="longitude" name="longitude" value="5" min="-100.00" max="100.00">
 				<input type="submit" value="Change geolocation">
 			</form>
 			
@@ -135,7 +118,6 @@
 					<option>SkewBox</option>
 				</select>
 			</div><br>
-
 			<button type="submit" class="btn btn-primary">Voeg doos toe</button>
 		</form>
 	</div>
@@ -143,5 +125,4 @@
 </body>
 <script src="PickUpDoos.js"></script>
 <script type="module" src="index.js"></script>
-
 </html>

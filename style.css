@@ -158,6 +158,11 @@ form{
 	animation-duration: 3s;
 }
 
+.truck-arriving{
+	animation-name: arrivalanimation;
+	animation-duration: 3s;
+}
+
 @-webkit-keyframes departanimation{
   0% {
     opacity: 1;
@@ -170,6 +175,21 @@ form{
   100% {
     opacity: 0;
     left: 100%;
+  }
+}
+
+@-webkit-keyframes arrivalanimation{
+  0% {
+    opacity: 0;
+    left: 100%;
+  }
+  75% {
+    opacity: 0;
+    left: 75%;
+  }
+  100% {
+    opacity: 1;
+    left: 0%;
   }
 }
 

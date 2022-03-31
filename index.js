@@ -1,25 +1,29 @@
-const conveyerbelt = document.querySelector('.conveyer-belt');
+const conveyerbelt = document.getElementById('conveyerBelt1');
 const boxVertical = document.querySelector('.boxVertical');
 const pickUpBox = document.querySelector('.pickUpBox');
 const conveyerbeltWidth = conveyerbelt.offsetWidth;    
+const nlCoardinates = { lat: 52, lon: 5};
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 
-let count = 0;
+let currentCords = nlCoardinates;
+var conveyerbeltHeight = boxVertical.offsetHeight + 60;
+let conveyerIDAmount = 2;
 let ps = [];
 let boxVerticalArray = [];
 let readyBoxes = [];
 let pickUpIsFull = true;
 let truckCount = 0;
 let parcelCount = 0;
+let loopBelt = 1;
+
 
 const shapes = ["box", "straightBox", "TBox", "LBox", "SkewBox"]; 
 const transportTypes = ["cold", "volatile", "general", "pallets", "courier"]; 
 //idee array lopende banden die elke keer als een lopende band wordt toegevoegd de array met een vergroot en verwijderd een weg haald 
 //bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe 
 
-import WeatherAPI, {getData, getData as getWeatherData} from './WeatherAPI.js'
+import WeatherAPI, {getData as getWeatherData, getWeather} from './WeatherAPI.js'
 const weatherAPI = new WeatherAPI();
-
 
 function main() {
 	initTruckForm();	
@@ -29,6 +33,7 @@ function main() {
 	initGUI();
 	let trucks = [];
 	localStorage.setItem("trucks", JSON.stringify(trucks));
+	getWeatherData(nlCoardinates.lon, nlCoardinates.lat);
 }
 
 function initGUI(){
@@ -58,26 +63,42 @@ function initGUI(){
 
 		}
 	});
+	initWeatherForm();
 }
 
+
+
+function initWeatherForm(){
+	let form = document.getElementById("Temp-form");
+	form.action="javascript:void(0);"
+	form.addEventListener('submit', function(event){
+	event.preventDefault();
+	currentCords.latitude = document.getElementById('latitude').value
+	currentCords.longitude = document.getElementById('longitude').value
+        getWeatherData(currentCords.lon , currentCords.lat);
+	});
+}
 
 
 function addConveyerBelt() { 
-//begrijp niet helemaal of die het doet of niet doet 
 conveyerbeltHeight = boxVertical.offsetHeight + 150; 
 var ConveyerBelt = document.createElement("div"); 
 ConveyerBelt.classList.add('conveyer-belt'); 
-// var text = document.createTextNode("Tutorix is the best e-learning platform"); 
-// ConveyerBelt.appendChild(text); 
+ConveyerBelt.setAttribute('id','conveyerBelt' + conveyerIDAmount)
+conveyerIDAmount++;
 conveyerPlace.appendChild(ConveyerBelt) 
 }
 
+
 function removeConveyerBelt() {
-	if(conveyerPlace.children.length > 4){
-	  conveyerbeltHeight = boxVertical.offsetHeight - 150;
-	  conveyerPlace.removeChild(conveyerPlace.lastChild);
-	}
+if(conveyerPlace.children.length > 1){
+  conveyerbeltHeight = boxVertical.offsetHeight - 150;
+  conveyerPlace.removeChild(conveyerPlace.lastChild);
+  conveyerIDAmount--;
+  loopBelt--;
 }
+}
+
 function conveyerRoll() { 
       if(checkPickUpDoos()){ 
       if (ps.length > 0) { 
@@ -113,14 +134,9 @@ function checkPickUpDoos(){
 
 function createPackage() {
       if(checkPickUpDoos()){
-          //twee regels hieronder functie maken random shape en type
       let RandomTransportType =  transportTypes[Math.floor(Math.random() * transportTypes.length)];
       let randomShape =  shapes[Math.floor(Math.random() * shapes.length)];
-          // \\ -> \
-      //hieronder functie maken create package
-      // const type = createElement('div');
       const img = createElement('img');
-      // img.src="images\\green-zig-zag.png"
       img.src=getImageSRC(randomShape);
       img.classList.add( 'move', randomShape);
       ps.push(new Package(img, randomShape, RandomTransportType));
@@ -178,15 +194,6 @@ function addDoosToOphaalbak(doosNaam) {
 }
 
 
-	let form = document.getElementById("Temp-form");
-	form.addEventListener('submit', function(event){
-    form.action="javascript:void(0);"
-	event.preventDefault();
-	let latitude = document.getElementById('latitude').value
-	let longitude = document.getElementById('longitude').value
-    getWeatherData(longitude, latitude)
-	});
-
 
 function initPackageForm()
 {
@@ -200,13 +207,9 @@ function initPackageForm()
 	form.reset();
 	form.addEventListener('submit', function(event){
 	event.preventDefault();
-	//check dat er niet al te veel op de rolbank liggen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//twee arrays vertical en horizontal bij elkaar tellen en een bepaald aantal niet te laten bereieken ik denk dat de error daarvandaan komt
 	let transport = document.getElementById('transportkind').value
 	let shape = document.getElementById('Shape').value
-	//functie create package hier gebruiken uiteindelijk hieronder
 	const img = createElement('img');
-	// img.src="images\\green-zig-zag.png"
 	img.src=getImageSRC(shape);
 	img.classList.add( 'move', shape);
 	ps.push(new Package(img, shape, transport));
@@ -254,6 +257,18 @@ function formButtonToggle(form)
 	}
 }
 
+function getConveyerbelt(){
+    if(conveyerIDAmount == 2){
+        return conveyerbelt;
+    }else{
+            if(loopBelt == conveyerIDAmount){
+                loopBelt = 1;
+            }
+            let conveyerbelt = document.getElementById(('conveyerBelt' + loopBelt));
+            loopBelt++;
+            return conveyerbelt;
+    }   
+}
 
  class Package {
       constructor(type, element, TransportType) {
@@ -262,6 +277,7 @@ function formButtonToggle(form)
           this.y = 0;
 	  this.id = generateRandomId(); 
           this.count = 0;
+          this.OwnConveyerbelt = getConveyerbelt();
           this.draw();
           this.shape = element;
           this.el = document.querySelector(('.' + element));
@@ -276,12 +292,12 @@ function formButtonToggle(form)
 
       }
     draw() {
-        conveyerbelt.appendChild(this.type);
+        this.OwnConveyerbelt.appendChild(this.type); 
     }
 
 
     removeHor() {
-            conveyerbelt.removeChild(this.type);
+            this.OwnConveyerbelt.removeChild(this.type);
             ps.shift();
             boxVerticalArray.push(this);
             boxVertical.appendChild(this.type);
@@ -314,35 +330,39 @@ class Truck
 {
 	constructor(x, y, delay, type, radius)
 		{
-			this.id = generateRandomId();
 			this.width = x;
 			this.height = y;
 			this.delay = delay;
 			this.type = type;
 			this.radius = radius;
 			this.cargo = [];
-		
-			let trucks = JSON.parse(localStorage.trucks);
-			while(trucks.find(x => x.id === this.id) != undefined)
-			{
-				this.id = generateRandomId(); 	
-			}
-			trucks.push(this);
-			localStorage.setItem("trucks", JSON.stringify(trucks));
-			this.init();
+			setTimeout(this.init.bind(this), this.delay * 1000);
 		}
 
 
 
 	init()
 	{
-		setTimeout(this.depart.bind(this), this.delay * 1000);
+		this.id = generateRandomId();
+		let trucks = JSON.parse(localStorage.trucks);
+				while(trucks.find(x => x.id === this.id) != undefined)
+				{
+					this.id = generateRandomId(); 	
+				}
+			trucks.push(this);
+			localStorage.setItem("trucks", JSON.stringify(trucks));
 		this.draw();
 		let boxes = document.querySelectorAll('.col');
 		boxes.forEach(box => {
 		    box.addEventListener('dragover', dragOver);
 		    box.addEventListener('dragleave', dragLeave);
 		    box.addEventListener('drop', drop);
+		});
+		let truck = document.getElementById(this.id);
+		truck.addEventListener('click', this.depart.bind(this));
+		truck.classList.add("truck-arriving");
+		truck.addEventListener('animationend', () => {
+			truck.classList.remove('truck-arriving');
 		});
 	}
 
@@ -370,24 +390,29 @@ class Truck
 		truckInfo.className = "truck-info";
 		truckInfo.innerHTML = "Transport: " + this.type;
 		truck.appendChild(truckInfo);
-
 		parking.appendChild(truck);
 	}
 	
 	async depart()
 	{
-		let truck = document.getElementById(this.id);
-		truck.classList.add("truck-departing");
-		truck.addEventListener('animationend', () => {
-			truck.remove();
-		});
+		if(await getWeather(currentCords.lon, currentCords.lat) != "Rain"){
+			let truck = document.getElementById(this.id);
+			truck.classList.add("truck-departing");
+			truck.addEventListener('animationend', () => {
+				truck.remove();
+				//remve truck from local storage
+			});
+		}
+		else{
+			alert("Truck: " + this.id + " can't depart it's raining");
+
+		}
 	}
 
 }
 
 function tryLoadParcel(truck, parcel, x, y)
 { 
-	console.log(parcel.transportType);
 		console.log(truck.type);
 
 	if (truck.type === parcel.transportType && truck.cargo[x, y] == undefined) {
@@ -418,27 +443,30 @@ function removeCellEvents(cell){
 
 }
 
-let p
 function drop(e) {
     e.preventDefault();
 	e.stopPropagation
     e.target.classList.remove('drag-over');
 
     // get the draggable element
-	p = e.target;
 	console.log(e.target);
     let draggable = document.getElementById(e.target);
     let trucks = JSON.parse(localStorage.trucks);
 	let x = e.target.id;
 	let y = e.target.parentElement.id;
  	
-pickUpBox.children
 
     let truck = trucks.find(
 	   i => i.id === parseInt(e.target.parentElement.parentElement.id));
+
+
+
 	let id = parseInt(e.dataTransfer.getData('text/plain'));
 	let parcel = readyBoxes.find(i => i.id === id);
 
+
+	console.log(parcel);
+	console.log(truck);
 
     if(tryLoadParcel(truck, parcel, x, y) != -1)
 	{
@@ -454,8 +482,7 @@ pickUpBox.children
 	e.target.appendChild(pkg);
 	}
 
-	else alert("The didn't fit");
+	else alert("Something happened");
 }
 
 window.onload = main;
-
