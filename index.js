@@ -2,8 +2,11 @@ const conveyerbelt = document.getElementById('conveyerBelt1');
 const boxVertical = document.querySelector('.boxVertical');
 const pickUpBox = document.querySelector('.pickUpBox');
 const conveyerbeltWidth = conveyerbelt.offsetWidth;    
+const nlCoardinates = { lat: 52, lon: 5};
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 
+let currentCords = nlCoardinates;
+var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 let conveyerIDAmount = 2;
 let ps = [];
 let boxVerticalArray = [];
@@ -13,12 +16,13 @@ let truckCount = 0;
 let parcelCount = 0;
 let loopBelt = 1;
 
+
 const shapes = ["box", "straightBox", "TBox", "LBox", "SkewBox"]; 
 const transportTypes = ["cold", "volatile", "general", "pallets", "courier"]; 
 //idee array lopende banden die elke keer als een lopende band wordt toegevoegd de array met een vergroot en verwijderd een weg haald 
 //bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe 
 
-import WeatherAPI, {getData, getData as getWeatherData} from './WeatherAPI.js'
+import WeatherAPI, {getData as getWeatherData, getWeather} from './WeatherAPI.js'
 const weatherAPI = new WeatherAPI();
 
 function main() {
@@ -29,6 +33,7 @@ function main() {
 	initGUI();
 	let trucks = [];
 	localStorage.setItem("trucks", JSON.stringify(trucks));
+	getWeatherData(nlCoardinates.lon, nlCoardinates.lat);
 }
 
 function initGUI(){
@@ -58,8 +63,21 @@ function initGUI(){
 
 		}
 	});
+	initWeatherForm();
 }
 
+
+
+function initWeatherForm(){
+	let form = document.getElementById("Temp-form");
+	form.action="javascript:void(0);"
+	form.addEventListener('submit', function(event){
+	event.preventDefault();
+	currentCords.latitude = document.getElementById('latitude').value
+	currentCords.longitude = document.getElementById('longitude').value
+        getWeatherData(currentCords.lon , currentCords.lat);
+	});
+}
 
 
 function addConveyerBelt() { 
@@ -175,15 +193,6 @@ function addDoosToOphaalbak(doosNaam) {
 	 pickUpBox.append(pickupBoxItem);
 }
 
-
-	let form = document.getElementById("Temp-form");
-	form.addEventListener('submit', function(event){
-	form.action="javascript:void(0);"
-	event.preventDefault();
-	let latitude = document.getElementById('latitude').value
-	let longitude = document.getElementById('longitude').value
-    getWeatherData(longitude, latitude)
-	});
 
 
 function initPackageForm()
@@ -321,35 +330,39 @@ class Truck
 {
 	constructor(x, y, delay, type, radius)
 		{
-			this.id = generateRandomId();
 			this.width = x;
 			this.height = y;
 			this.delay = delay;
 			this.type = type;
 			this.radius = radius;
 			this.cargo = [];
-		
-			let trucks = JSON.parse(localStorage.trucks);
-			while(trucks.find(x => x.id === this.id) != undefined)
-			{
-				this.id = generateRandomId(); 	
-			}
-			trucks.push(this);
-			localStorage.setItem("trucks", JSON.stringify(trucks));
-			this.init();
+			setTimeout(this.init.bind(this), this.delay * 1000);
 		}
 
 
 
 	init()
 	{
-		setTimeout(this.depart.bind(this), this.delay * 1000);
+		this.id = generateRandomId();
+		let trucks = JSON.parse(localStorage.trucks);
+				while(trucks.find(x => x.id === this.id) != undefined)
+				{
+					this.id = generateRandomId(); 	
+				}
+			trucks.push(this);
+			localStorage.setItem("trucks", JSON.stringify(trucks));
 		this.draw();
 		let boxes = document.querySelectorAll('.col');
 		boxes.forEach(box => {
 		    box.addEventListener('dragover', dragOver);
 		    box.addEventListener('dragleave', dragLeave);
 		    box.addEventListener('drop', drop);
+		});
+		let truck = document.getElementById(this.id);
+		truck.addEventListener('click', this.depart.bind(this));
+		truck.classList.add("truck-arriving");
+		truck.addEventListener('animationend', () => {
+			truck.classList.remove('truck-arriving');
 		});
 	}
 
@@ -377,24 +390,29 @@ class Truck
 		truckInfo.className = "truck-info";
 		truckInfo.innerHTML = "Transport: " + this.type;
 		truck.appendChild(truckInfo);
-
 		parking.appendChild(truck);
 	}
 	
 	async depart()
 	{
-		let truck = document.getElementById(this.id);
-		truck.classList.add("truck-departing");
-		truck.addEventListener('animationend', () => {
-			truck.remove();
-		});
+		if(await getWeather(currentCords.lon, currentCords.lat) != "Rain"){
+			let truck = document.getElementById(this.id);
+			truck.classList.add("truck-departing");
+			truck.addEventListener('animationend', () => {
+				truck.remove();
+				//remve truck from local storage
+			});
+		}
+		else{
+			alert("Truck: " + this.id + " can't depart it's raining");
+
+		}
 	}
 
 }
 
 function tryLoadParcel(truck, parcel, x, y)
 { 
-	console.log(parcel.transportType);
 		console.log(truck.type);
 
 	if (truck.type === parcel.transportType && truck.cargo[x, y] == undefined) {
@@ -440,9 +458,15 @@ function drop(e) {
 
     let truck = trucks.find(
 	   i => i.id === parseInt(e.target.parentElement.parentElement.id));
+
+
+
 	let id = parseInt(e.dataTransfer.getData('text/plain'));
 	let parcel = readyBoxes.find(i => i.id === id);
 
+
+	console.log(parcel);
+	console.log(truck);
 
     if(tryLoadParcel(truck, parcel, x, y) != -1)
 	{
