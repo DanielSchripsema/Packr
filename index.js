@@ -1,5 +1,6 @@
 
 import WeatherAPI from './WeatherAPI.js'
+import factoryShapes from './factoryShape.js'
 const conveyerbelt = document.getElementById('conveyerBelt1');
 const boxVertical = document.querySelector('.boxVertical');
 const pickUpBox = document.querySelector('.pickUpBox');
@@ -23,8 +24,16 @@ const transportTypes = ["cold", "volatile", "general", "pallets", "courier"];
 //bij pakketjes aanmaken loopt hij over elke band in de array en voegt die er een toe 
 
 const weatherAPI = new WeatherAPI();
+const factoryShapess = new factoryShapes();
+
+
 
 function main() {
+	// factoryShapess.createL();
+	factoryShapess.createZigZag();
+	// factoryShapess.createL();
+	// factoryShapess.createRectangle();
+	// factoryShapess.createSquare();
 	initTruckForm();	
 	initPackageForm();
 	setInterval(createPackage, 5000);
@@ -33,6 +42,7 @@ function main() {
 	let trucks = [];
 	localStorage.setItem("trucks", JSON.stringify(trucks));
 }
+
 
 function initGUI(){
 
@@ -133,30 +143,13 @@ function createPackage() {
       if(checkPickUpDoos()){
       let RandomTransportType =  transportTypes[Math.floor(Math.random() * transportTypes.length)];
       let randomShape =  shapes[Math.floor(Math.random() * shapes.length)];
-      const img = createElement('img');
-      img.src=getImageSRC(randomShape);
-      img.classList.add( 'move', randomShape);
-      ps.push(new Package(img, randomShape, RandomTransportType));
+	  factoryShapess.getShape(randomShape);
+      const divShape = factoryShapess.createL();
+      divShape.classList.add( 'move', randomShape);
+      ps.push(new Package(divShape, randomShape, RandomTransportType));
       }
   }
   
-function getImageSRC(shape){
-let shapeSRC;
-switch(shape) {
-  case "box":
-      return shapeSRC = "images\\white-square.png"
-  case "straightBox":
-      return shapeSRC ="images\\blue-rectangle.png"
-  case "TBox":
-      return shapeSRC = "images\\red-t.png"
-  case "LBox":
-      return shapeSRC = "images\\orange-l.png"
-  case "SkewBox":
-      return   shapeSRC = "images\\green-zig-zag.png"
-  default:
-    return shapeSRC = "images\\blue-rectangle.png";
-}
-}
 
 //waarom?
 function createElement(tag) {
@@ -208,7 +201,7 @@ function initPackageForm()
 	const img = createElement('img');
 	img.src=getImageSRC(shape);
 	img.classList.add( 'move', shape);
-	ps.push(new Package(img, shape, transport));
+	ps.push(new Package(factoryShapess.getShape(shape), shape, transport));
 	formButtonToggle(form);
 	form.reset();
 	});
