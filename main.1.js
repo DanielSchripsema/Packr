@@ -1,3 +1,9 @@
+var REFRESHRATE = 1000;
+var HALL_ONE = '1';
+var HALL_TWO = '2';
+var INITAL_HALL= '1';
+var CURRENT_HALL = 'ch';
+
 function
 click()
 {
@@ -46,14 +52,15 @@ getElement(selector)
 }
 
 function
-bindElement(element, obj)
+bindElement(element, handler)
 {
 	element.addEventListener('click', event => {
-		obj.call(_this);
+		handler.add();
 	})
 }
 
-function pushBand(bandId, hallId)
+function
+pushBand(bandId, hallId)
 {
 	let hall = JSON.parse(localStorage.getItem(hallId));		
 	if(hall.belts[bandId - 1].x.length > 0 
@@ -63,6 +70,16 @@ function pushBand(bandId, hallId)
 		   hall.belts[bandId - 1].x.unshift(last);
 	       	   localStorage.setItem(hallId, JSON.stringify(hall));
 			
+	}
+}
+
+function 
+createHall()
+{
+	return {
+		id: undefined,
+		belts: [],
+		trucks: []
 	}
 }
 
@@ -102,13 +119,46 @@ addPackge()
 	drawBelt(hall.belts[hall.belts.length - 1]);
 }
 
+
 function 
-belt()
+drawBelts()
 {
-	this.x = new Array(5);
+	let hallId = localStorage.getItem(CURRENT_HALL);	
+	let hall = JSON.parse(localStorage.getItem(hallId));		
+	hall.belts.forEach(belt => drawBelt(belt));
 }
 
+function 
+drawBelt(belt)
+{
+	let _belt = new Object();
+	let temp = getElement("#b" + belt.id)
 
+	if(temp === null){
+		_belt = document.createElement('div');
+		_belt.className = 'belt';
+		_belt.id = "b" + belt.id;
+	}
+	else {
+		_belt = temp;
+		_belt.innerHTML = '';
+	}
+
+	let belts = document.getElementById('belts');
+	let row = document.createElement('div');
+	row.className = 'row';
+	for(let x = 0; x < belt.x.length; x++)
+	{
+		let cell = document.createElement('div');
+		cell.className = 'col';
+		cell.id = x;
+		if (belt.x[x] === 'package') cell.style.backgroundColor = 'black';
+		row.appendChild(cell);
+
+	}
+	_belt.appendChild(row);
+	belts.appendChild(_belt);
+}
 
 function 
 hall()
@@ -118,99 +168,59 @@ hall()
 }
 
 hall.prototype = {
-	addBelt: function() {
-		this.belts.push(new belt());
+	add: function(a) {
+		this.belts.push('aaaa');
 		this.clk.fire(this);
-	},
-	removeBelt: function() {
-		this.belts.pop();
-		this.clk.fire(this);
-	},
-
-	init: function(obj) {
-		this.clk.subscribe(obj.gui.vhall);
 	}
 }
 
-function 
-vbelt(belt)
-{
-	this.draw(belt);
-}
+function gui()
+{}
 
-vbelt.prototype = {
-	draw: function(belt) {
-
-		let _belt = document.createElement('div');
-		_belt.className = 'belt';
-		_belt.id = "b" + belt.id;
-
-		let belts = document.getElementById('belts');
-		let row = document.createElement('div');
-		row.className = 'row';
-		for(let x = 0; x < belt.x.length; x++)
-		{
-			let cell = document.createElement('div');
-			cell.className = 'col';
-			cell.id = x;
-			if (belt.x[x] === 'package') cell.style.backgroundColor = 'black';
-			row.appendChild(cell);
-
-		}
-		_belt.appendChild(row);
-		belts.appendChild(_belt);
-	}
-}
-
-
-function
-vhall(hall)
-{
-	this.draw(hall);
-}
-
-
-vhall.prototype = {
-	draw: function(hall){
-		Array.from(document.getElementsByClassName('belt'))
-			.forEach(belt => { belt.remove(); });
-		hall.belts.forEach(belt => new vbelt(belt));
-	},
-
-	update: function(obj){
-		console.log('updating hall');
-		this.draw(obj);
-	}
-}
-
-function gui(obj)
-{
-	this.init(obj);
-	this.vhall = new vhall(obj.getCurrentHall());
-}
 
 gui.prototype = 
 {
-	draw: function(hall)
-	{
-		var elemDiv = document.createElement('div');
-		elemDiv.innerHTML = hall;
-		document.body.appendChild(elemDiv);
-	},
 	update: function(eventType, mesg)
 	{
 		console.log(eventType, mesg);				
-	},
+	}
+}
 
-	init: function(obj)
-	{
-	this.hall = obj.hall;
+function
+initHalls()
+{
+	
+		
+			
+
+
+	let hallOne = createHall();
+	let hallTwo = createHall();
+	hallOne.id = HALL_ONE;
+	hallTwo.id = HALL_TWO;
+	localStorage.setItem(HALL_ONE, JSON.stringify(hallOne));		
+	localStorage.setItem(HALL_TWO, JSON.stringify(hallTwo));		
+	localStorage.setItem(CURRENT_HALL, INITAL_HALL);		
+}
+
+function
+flipHalls()
+{
+	let currentHall = localStorage.getItem(CURRENT_HALL);	
+	currentHall = currentHall === HALL_ONE ? HALL_TWO : HALL_ONE;
+	localStorage.setItem(CURRENT_HALL, currentHall);
+	getElement('#hallinfo').textContent = "Hall: " + currentHall;
+}
+
+function 
+initInterface(el)
+{
 	this.packr = getElement('#root')
 	this.title = createElement('h3')
 	this.title.textContent = 'PACKRR'
 	this.hallInfo = createElement('h4')
-	this.hallInfo.className = "hallinfo";
-	this.hallInfo.textContent = "Hall: 1";
+	this.hallInfo.id = "hallinfo";
+	this.hallInfo.textContent = "Hall: " + localStorage.getItem(CURRENT_HALL);
 	this.addTruckBtn = createElement('button')
 	this.addTruckBtn.textContent = 'Add truck'
 	this.removeBeltBtn = createElement('button')
@@ -235,56 +245,23 @@ gui.prototype =
 		this.beltsDiv
 	);
 
+	this.bindElement(this.switchHallsBtn, this.flipHalls);
+	this.bindElement(this.addBeltBtn, this.addBelt);
+	this.bindElement(this.removeBeltBtn, this.removeBelt);
+	this.bindElement(this.addTruckBtn, el);
 
-	bindElement(this.switchHallsBtn, obj.switchHalls);
-	bindElement(this.addBeltBtn, obj.addBelt);
-	bindElement(this.removeBeltBtn, obj.removeBelt);
-	//this.bindElement(this.addTruckBtn, el);
-	},
-	
-	update: function(obj){
-		let hallinfo = getElement(".hallinfo");
-		this.hallInfo.textContent = "Hall: " + (obj.currentHallIndex + 1);
-	}
 }
 
 function
-stackr()
+main()
 {
-	this.clk = new click();
-	this.halls = new Array(new hall(), new hall());
-	this.currentHallIndex = 0; 
-	this.gui = new gui(this);
-	this.clk.subscribe(this.gui);
-	this.getCurrentHall().init(this);
+	var gu = new gui();
+	var hal = new hall();
+
+	hal.clk.subscribe(gu);
+
+	initHalls();
+	initInterface(hal);
 }
 
-stackr.prototype = 
-{
-	switchHalls: function()
-	{	
-		this.currentHall = this.currentHallIndex === 0 ? 
-			this.currentHallIndex = 1:
-			this.currentHallIndex = 0;
-		this.clk.fire(this);
-	},
-
-	addBelt: function()
-	{
-		this.halls[this.currentHallIndex].addBelt();
-	},
-
-	removeBelt: function()
-	{
-		this.getCurrentHall().removeBelt();
-	},
-
-	getCurrentHall: function ()
-	{
-		return this.halls[this.currentHallIndex];
-	}
-}
-
-let _this;
-window.onload = _this = new stackr(); 
-
+window.onload = main(); 

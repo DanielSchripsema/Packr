@@ -1,21 +1,25 @@
-const conveyerbelt = document.getElementById('conveyerBelt1');
 const boxVertical = document.querySelector('.boxVertical');
-const pickUpBox = document.querySelector('.pickUpBox');
+//const pickUpBox = document.querySelector('.pickUpBox');
+const conveyerbelt = document.getElementById('conveyerBelt1');
+
 const conveyerbeltWidth = conveyerbelt.offsetWidth;    
 const nlCoardinates = { lat: 52, lon: 5};
+const halls = ["primary-hall", "secondary-hall"];
+let currentHall;
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
 
 let currentCords = nlCoardinates;
 var conveyerbeltHeight = boxVertical.offsetHeight + 60;
-let conveyerIDAmount = 2;
+let conveyerIDAmount = 1;
 let ps = [];
 let boxVerticalArray = [];
+ps[0] = [];
+ps[1] = [];
+boxVerticalArray[0] = [];
+boxVerticalArray[1] = [];
 let readyBoxes = [];
 let pickUpIsFull = true;
-let truckCount = 0;
-let parcelCount = 0;
 let loopBelt = 1;
-
 
 const shapes = ["box", "straightBox", "TBox", "LBox", "SkewBox"]; 
 const transportTypes = ["cold", "volatile", "general", "pallets", "courier"]; 
@@ -28,12 +32,15 @@ const weatherAPI = new WeatherAPI();
 function main() {
 	initTruckForm();	
 	initPackageForm();
-	setInterval(createPackage, 50);
-	setInterval(conveyerRoll, 10);
+	currentHall = 0;
 	initGUI();
 	let trucks = [];
 	localStorage.setItem("trucks", JSON.stringify(trucks));
 	getWeatherData(nlCoardinates.lon, nlCoardinates.lat);
+        setInterval(createPackage, 5000, halls[0]);
+	setInterval(createPackage, 5000, halls[1]);
+        setInterval(conveyerRoll, 1000, halls[0]);
+        setInterval(conveyerRoll, 1000, halls[1]);
 }
 
 function initGUI(){
@@ -53,14 +60,15 @@ function initGUI(){
 	let secondaryHall = document.getElementById("secondary-hall");
 		console.log(primaryHall);
 
-		if(primaryHall.style.display == 'block'){
+		if(currentHall == 0){
 			primaryHall.style.display = 'none';	
 			secondaryHall.style.display = 'block';	
+			currentHall = 1;
 		}
 		else {
 			primaryHall.style.display = 'block';	
 			secondaryHall.style.display = 'none';	
-
+			currentHall = 0;
 		}
 	});
 	initWeatherForm();
@@ -80,143 +88,8 @@ function initWeatherForm(){
 }
 
 
-function addConveyerBelt() { 
-conveyerbeltHeight = boxVertical.offsetHeight + 150; 
-var ConveyerBelt = document.createElement("div"); 
-ConveyerBelt.classList.add('conveyer-belt'); 
-ConveyerBelt.setAttribute('id','conveyerBelt' + conveyerIDAmount)
-conveyerIDAmount++;
-conveyerPlace.appendChild(ConveyerBelt) 
-}
 
 
-function removeConveyerBelt() {
-if(conveyerPlace.children.length > 1){
-  conveyerbeltHeight = boxVertical.offsetHeight - 150;
-  conveyerPlace.removeChild(conveyerPlace.lastChild);
-  conveyerIDAmount--;
-  loopBelt--;
-}
-}
-
-function conveyerRoll() { 
-      if(checkPickUpDoos()){ 
-      if (ps.length > 0) { 
-          ps.forEach(p => { 
-              if(canMove(p.x, conveyerbeltWidth)){ 
-                  p.moveHor(); 
-              }else{ 
-                  p.removeHor(); 
-              } 
-          });  
-      } 
-      if (boxVerticalArray.length > 0) { 
-          boxVerticalArray.forEach(p => { 
-                  if(canMove(p.y, conveyerbeltHeight)){ 
-                      p.moveVer(); 
-                  }else { 
-                      addDoosToOphaalbak(p); 
-                      boxVerticalArray.shift(); 
-                      boxVertical.removeChild(p.type); 
-                  } 
-          });  
-      }
-  }
-}
-
-function checkPickUpDoos(){
-    if(pickUpBox.children.length >= 8){
-        return pickUpIsFull = false;
-    }else{
-        return pickUpIsFull = true;
-    }
-}
-
-function createPackage() {
-      if(checkPickUpDoos()){
-      let RandomTransportType =  transportTypes[Math.floor(Math.random() * transportTypes.length)];
-      let randomShape =  shapes[Math.floor(Math.random() * shapes.length)];
-      const img = createElement('img');
-      img.src=getImageSRC(randomShape);
-      img.classList.add( 'move', randomShape);
-      ps.push(new Package(img, randomShape, RandomTransportType));
-      }
-  }
-  
-function getImageSRC(shape){
-let shapeSRC;
-switch(shape) {
-  case "box":
-      return shapeSRC = "images\\white-square.png"
-  case "straightBox":
-      return shapeSRC ="images\\blue-rectangle.png"
-  case "TBox":
-      return shapeSRC = "images\\red-t.png"
-  case "LBox":
-      return shapeSRC = "images\\orange-l.png"
-  case "SkewBox":
-      return   shapeSRC = "images\\green-zig-zag.png"
-  default:
-    return shapeSRC = "images\\blue-rectangle.png";
-}
-}
-
-//waarom?
-function createElement(tag) {
-    return document.createElement(tag);
-}
-
-function canMove(PackageX, conveyerbeltSize) {
-
-    if (PackageX < conveyerbeltSize) {
-        return true;
-    }
-    return false;
-};
-
-function addDoosToOphaalbak(doosNaam) {
-	 var pickupBoxItem = document.createElement('li');
-	 pickupBoxItem.classList.add('pickupBoxItem');
-	 pickupBoxItem.innerHTML = "Package = Type: " + doosNaam.transportType +
-		" | Shape: " ;
-	 var pickupBoxItemImg = document.createElement('img');
-	 pickupBoxItemImg.className = "pickup-shape"
-	 pickupBoxItemImg.src = getImageSRC(doosNaam.shape);
-	 pickupBoxItem.appendChild(pickupBoxItemImg);
-
-
-	 pickupBoxItem.draggable = true;
-	 pickupBoxItem.addEventListener('dragstart', dragStart);
-	 console.log(doosNaam);
-	 readyBoxes.push(doosNaam);
-	 pickupBoxItem.id = doosNaam.id; 
-	 pickUpBox.append(pickupBoxItem);
-}
-
-
-
-function initPackageForm()
-{
-	let formButton = document.getElementById("package-form-btn");
-	//let formCloseButton = document.getElementById("package-form-close-btn");
-	let form = document.getElementById("package-form");
-	form.action="javascript:void(0);"
-	//formCloseButton.onclick = function () {formButtonToggle(form)};
-	formButton.onclick = function (){ formButtonToggle(form)};
-	formButtonToggle(form);
-	form.reset();
-	form.addEventListener('submit', function(event){
-	event.preventDefault();
-	let transport = document.getElementById('transportkind').value
-	let shape = document.getElementById('Shape').value
-	const img = createElement('img');
-	img.src=getImageSRC(shape);
-	img.classList.add( 'move', shape);
-	ps.push(new Package(img, shape, transport));
-	formButtonToggle(form);
-	form.reset();
-	});
-}
 
 function generateRandomId(){
 	return Math.floor(Math.random() * 100000);
@@ -257,50 +130,50 @@ function formButtonToggle(form)
 	}
 }
 
-function getConveyerbelt(){
-    if(conveyerIDAmount == 2){
-        return conveyerbelt;
-    }else{
+function getConveyerbelt(hallId){
             if(loopBelt == conveyerIDAmount){
                 loopBelt = 1;
             }
-            let conveyerbelt = document.getElementById(('conveyerBelt' + loopBelt));
+	    console.log(hallId);
+	    let hall = document.getElementById(hallId);
+	    let belt = hall.querySelector("#conveyerBelt" + 1);
             loopBelt++;
-            return conveyerbelt;
-    }   
+            return belt;
 }
 
  class Package {
-      constructor(type, element, TransportType) {
+      constructor(type, element, TransportType, hallId) {
           this.type = type;
           this.x = 0;
           this.y = 0;
 	  this.id = generateRandomId(); 
           this.count = 0;
-          this.OwnConveyerbelt = getConveyerbelt();
+          this.conveyerbelt = getConveyerbelt(hallId);
           this.draw();
+	  this.hallId = hallId;
           this.shape = element;
           this.el = document.querySelector(('.' + element));
           this.offset = 0;
           this.width = this.el.offsetWidth;
           this.height = this.el.offsetWidth;
           this.transportType = TransportType;
-	  while(ps.find(x => x.id === this.id) != undefined)
+	  while(ps.at(hallId).find(x => x.id === this.id) != undefined)
 			{
 				this.id = generateRandomId(); 	
 			}
 
       }
     draw() {
-        this.OwnConveyerbelt.appendChild(this.type); 
+        this.conveyerbelt.appendChild(this.type); 
     }
 
 
-    removeHor() {
-            this.OwnConveyerbelt.removeChild(this.type);
-            ps.shift();
-            boxVerticalArray.push(this);
-            boxVertical.appendChild(this.type);
+    removeHor(hall) {
+            this.conveyerbelt.lastChild.remove;
+            ps.at(this.hallId).shift();
+             boxVerticalArray.at(this.hallId).push(this);
+	    let boxV = hall.querySelector(".boxVertical");
+            boxV.appendChild(this.type);
     }
 
     moveHor() {
@@ -477,7 +350,7 @@ function drop(e) {
 	pkg.src = getImageSRC(parcel.shape);
 
 	let node = document.getElementById(id);
-	  pickUpBox.removeChild(node);
+	pickUpBox.removeChild(node);
 
 	e.target.appendChild(pkg);
 	}

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<title>Packr</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="shortcut icon" href="#">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="nav-bar">
+		<button class="btn btn-primary" id="truck_form_btn">Add a truck</button>
+		<button class="btn btn-primary" id="package-form-btn">Add a parcel</button>
+		<button  class="btn btn-primary" id="add-conveyerbelt-btn">Voeg rolband toe</button>
+		<button class="btn btn-primary" id="remove-conveyerbelt-btn">Verwijder rolband</button>
+		<button type="button" id="hall-switch-btn" class="btn btn-primary">Switch halls</button>
+	</div>
+	
+
+	<div id="primary-hall">
+	<div class="layout">
+		<div id="conveyerPlace">
+
+			<div class="conveyer-belt" id="conveyerBelt1">
+			</div>
+		</div>
+		<div class="boxVertical">
+		</div>
+		<div class="trucks_parking" id="trucks_parking">
+		</div>
+		<div class="pickUpBox"></div>
+		</div>
+		<div>
+	</div>
+	</div>
+
+
+	<div id="secondary-hall">
+	<div class="layout">
+
+		<div id="conveyerPlace">
+
+			<div class="conveyer-belt" id="conveyerBelt1">
+			</div>
+		</div>
+		<div class="boxVertical">
+		</div>
+		<div class="trucks_parking" id="trucks_parking">
+		</div>
+		<div class="pickUpBox"></div>
+		</div>
+		<div>
+	</div>
+	</div>
+	<div>
+			<form id="Temp-form">
+				<label id = "CounrtyTemp">
+				</label>
+				<input type="number" id="latitude" name="latitude" value="52" min="-100.00" max="100.00">
+				<input type="number" id="longitude" name="longitude" value="5" min="-100.00" max="100.00">
+				<input type="submit" value="Change geolocation">
+			</form>
+			
+
+		</div>
+
+	</div>
+	
+	<div>
+	</div>
+
+	</div>
+	<div>
+		<form action="#" id="truck_form">
+			<button id="truck_form_close_btn" class="btn-close">x</button>
+			<h4>Add a new truck</h4>
+			<label>Width:</label><br>
+			<input class="form-control" type="number" id="x-size" name="x-size"><br>
+			<label>Height:</label><br>
+			<input class="form-control" type="number" id="y-size" name="y-size"><br>
+			<label>Delay in seconds:</label><br>
+			<input class="form-control" type="number" id="delay" name="delay"><br>
+			<label>Type:</label><br>
+			<select id="type" class="form-control" name="type">
+				<option value="cold">Cold</option>
+				<option value="volatile">Volatile</option>
+				<option value="general">General</option>
+				<option value="pellet">Pellets</option>
+				<option value="courier">Courier</option>
+			</select><br>
+			<label>Action radius:</label><br>
+			<input class="form-control" type="number" id="radius" name="radius"><br>
+			<input id="truck_form_submit" type="submit" value="Create" class="btn btn-primary">
+		</form>
+	</div>
+	<div>
+		<form action="#" id="package-form">
+			<button id="package-form-close-btn" class="btn-close">x</button><br>
+			<h4>Doos toevoegen</h4>
+			<div class="form-group">
+				<label>Soort transport</label><br>
+				<select class="form-control" name="select" id="transportkind"><br>
+					<option>Koudtransport</option>
+					<option>Breekbaartransport</option>
+					<option>Algemeentransport</option>
+					<option>Pallets</option>
+					<option>Snelkoerier</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Soort vorm</label><br>
+				<select class="form-control" name="select" id="Shape">
+					<option>box</option>
+					<option>straightBox</option>
+					<option>TBox</option>
+					<option>LBox</option>
+					<option>SkewBox</option>
+				</select>
+			</div><br>
+			<button type="submit" class="btn btn-primary">Voeg doos toe</button>
+		</form>
+	</div>
+	</div>
+</body>
+<script type="module" src="index.js"></script>
+</html>

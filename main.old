@@ -1,0 +1,277 @@
+const SKEW_MAP = [  
+	[0, 1, 1, 0],
+	[1, 1, 0, 0],
+	[0, 0, 0, 0],
+	[0, 0, 0, 0]	
+];
+
+const STRAIGHT_MAP= [  
+	[1, 1, 1, 1],
+	[0, 0, 0, 0],
+	[0, 0, 0, 0],
+	[0, 0, 0, 0]	
+];
+
+const SQUARE_MAP= [  
+	[1, 1, 0, 0],
+	[1, 1, 0, 0],
+	[0, 0, 0, 0],
+	[0, 0, 0, 0]	
+];
+
+const T_MAP= [  
+	[1, 1, 1, 0],
+	[0, 1, 0, 0],
+	[0, 0, 0, 0],
+	[0, 0, 0, 0]	
+];
+
+const L_MAP= [  
+	[0, 0, 1, 0],
+	[1, 1, 1, 0],
+	[0, 0, 0, 0],
+	[0, 0, 0, 0]	
+];
+
+//TRUCK
+class MTruck{
+	constructor(x, y, delay, type, radius){
+		this.truck = {
+		x: x,
+		y: y,
+		delay: delay,
+		type: type,
+		radius: radius
+		}
+	}
+
+	//addPackage(package){}
+
+	dapart(){}
+}
+
+class VTruck{
+	constructor(){}
+	displayTruck(truck){
+	let parking = document.getElementById('parking');
+		let _truck = document.createElement('div');
+		_truck.className = 'truck';
+		for(let y = 0; y < truck.y; y++)
+		{
+			let row = document.createElement('div');
+			row.className = 'row';
+			row.id = y;
+			for(let x = 0; x < truck.x; x++)
+			{
+				let cell = document.createElement('div');
+				cell.className = 'col';
+				cell.id = x;
+				row.appendChild(cell);
+
+			}
+		_truck.appendChild(row);
+				}
+		let _truckInfo = document.createElement('div');
+		_truck.appendChild(_truckInfo);
+		parking.appendChild(_truck);
+	}
+}
+
+class CTruck{
+	constructor(model, view){
+
+		this.model = model
+		this.view = view
+		this.onTruckChanged(this.model.truck)
+
+	}
+
+	onTruckChanged = (truck) => {
+		this.view.displayTruck(truck)
+	}
+}
+
+
+//BELT
+class MBelt{
+	constructor(belt){
+	this.belt= {
+		id: id, 
+		x: 16,
+		y: 2,
+		stack: []
+		}
+	}
+	tryPop(){}
+	tryPush(){}
+	tryMove(){}
+}
+
+class CBelt{
+	constructor(model, view) {
+		this.model = model
+		this.view = view
+		this.onBeltChanged(this.model.belt)
+	}
+	onBeltChanged = (belt) => {
+		this.view.displayBelt(belt)
+	}
+
+	destroy = () => {
+		console.log("fuck");
+	}
+}
+
+class VBelt{
+	constructor(){}
+	displayBelt(belt){
+	let belts = document.getElementById('belts');
+		let _belt= document.createElement('div');
+		_belt.className = 'belt';
+		_belt.id = belt.id;
+		for(let y = 0; y < belt.y; y++)
+		{
+			let row = document.createElement('div');
+			row.className = 'row';
+			row.id = y;
+			for(let x = 0; x < belt.x; x++)
+			{
+				let cell = document.createElement('div');
+				cell.className = 'col';
+				cell.id = x;
+				row.appendChild(cell);
+
+			}
+		_belt.appendChild(row);
+				}
+		//add stuck info
+		belts.appendChild(_belt);
+	}
+}
+
+//MAIN
+class MMain{
+	constructor(){
+		this.trucks = new Map()
+		this.belts = new Map()
+		this.beltCounter = 0
+	}
+	switchHalls(){}
+	addTruck(){
+		console.log('adding truck')
+		//hack
+		const truck = new MTruck(4, 4, 10, 'ice', 100)
+		this.trucks.set(++this.truckCounter, truck)
+		return truck
+	}
+	addBelt(){
+		console.log('adding belt')
+		//hack
+		const belt = new MBelt(this.beltCounter++)
+		this.belts.set(this.beltCounter, belt)
+		return belt 
+	}
+
+	removeBelt(){
+		console.log('removing belt belt')
+		if (this.beltCounter > 0)
+		this.belts.delete(--this.beltCounter)
+		return
+	}
+}
+
+
+class CMain{
+	constructor(model, view) {
+		this.model = model
+		this.view = view
+		this.view.bindAddTruckBtn(this.handleAddTruck)
+		this.view.bindAddBeltBtn(this.handleAddBelt)
+		this.view.bindRemoveBeltBtn(this.handleRemoveBelt)
+
+		//seed data
+		this.handleAddBelt()
+		this.handleAddBelt()
+	}
+	handleAddTruck = () => {
+		//try add
+		const _truck = this.model.addTruck()
+		const _cTruck = new CTruck(_truck, new VTruck());
+	}
+	handleAddBelt= () => {
+		//try add
+		const _belt = this.model.addBelt()
+		const _cBelt= new CBelt(_belt, new VBelt());
+		localStorage.setItem("1", JSON.stringify(_cBelt))
+	}
+
+	handleRemoveBelt= () => {
+		console.log('removing')
+		const a = JSON.parse(localStorage.getItem("1"))
+		console.log(a)
+		a.destroy()
+	}
+
+
+}
+
+class VMain{
+	constructor() {
+		this.packr = this.getElement('#root')
+		this.title = this.createElement('h4')
+		this.title.textContent = 'PACKRR'
+		this.addTruckBtn = this.createElement('button')
+		this.addTruckBtn.textContent = 'Add truck'
+		this.removeBeltBtn = this.createElement('button')
+		this.removeBeltBtn.textContent = 'Remove Belt'
+		this.addBeltBtn= this.createElement('button')
+		this.addBeltBtn.textContent = 'Add belt'
+		this.switchHallsBtn = this.createElement('button')
+		this.switchHallsBtn.textContent = 'Switch halls'
+		this.trucksDiv = this.createElement('div')
+		this.trucksDiv.id = 'parking'
+		this.beltsDiv = this.createElement('div')
+		this.beltsDiv.id = 'belts'
+
+		this.packr.append(
+			this.title, 
+			this.addBeltBtn, 
+			this.removeBeltBtn,
+			this.addTruckBtn, 
+			this.switchHallsBtn,
+			this.trucksDiv,
+			this.beltsDiv
+		);
+	}
+
+	bindAddTruckBtn(handler) {
+		this.addTruckBtn.addEventListener('click', event => {
+			handler()
+		})
+	}
+
+	bindAddBeltBtn(handler) {
+		this.addBeltBtn.addEventListener('click', event => {
+			handler()
+		})
+	}
+
+	bindRemoveBeltBtn(handler)  {
+		this.removeBeltBtn.addEventListener('click', event => {
+			handler()
+		})
+	}
+
+	createElement(tag, className) {
+		const element = document.createElement(tag)
+		if (className) element.classList.add(className)
+		return element
+	}
+	getElement(selector) {
+		const element = document.querySelector(selector)
+		return element
+	}
+}
+
+var packr = new CMain(new MMain(), new VMain());
+
